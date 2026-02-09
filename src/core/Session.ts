@@ -248,6 +248,11 @@ export type SessionArgs = {
   on_behalf_of_user: string | undefined;
 }
 
+export type XtraHttpRequestHeader = {
+  header: string;
+  value: string;
+}
+
 const TAG = 'Session';
 
 /**

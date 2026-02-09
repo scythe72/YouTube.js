@@ -9,6 +9,7 @@ import {
 
 import type { Context, Session } from '../core/index.js';
 import type { FetchFunction } from '../types/index.js';
+import type { XtraHttpRequestHeader } from "../core/index.js";
 
 export interface HTTPClientInit {
   baseURL?: string;
@@ -106,6 +107,16 @@ export default class HTTPClient {
         request_headers.set('X-GOOG-API-FORMAT-VERSION', '2');
         request_headers.delete('X-Youtube-Client-Version');
       }
+    }
+    
+    if (session.context.request?.internalExperimentFlags) {
+      session.context.request.internalExperimentFlags
+        .filter<XtraHttpRequestHeader>((elem: any): elem is XtraHttpRequestHeader => {
+          return (elem as XtraHttpRequestHeader).header !== undefined &&
+            (elem as XtraHttpRequestHeader).value !== undefined;
+        }).forEach((elem: XtraHttpRequestHeader) => {
+        request_headers.set(elem.header, elem.value);
+      })
     }
 
     // Authenticate (NOTE: YouTube Kids does not support regular bearer tokens)
