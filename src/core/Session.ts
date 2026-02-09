@@ -217,6 +217,10 @@ export type SessionOptions = {
    * forcing an older Player ID can help work around temporary issues.
    */
   player_id?: string;
+  /**
+   * Extra HTTP request headers.  Additional HTTP headers added to YouTube fetch requests.
+   */
+  xtra_headers?: XtraHttpRequestHeader[];
 }
 
 export type SessionData = {
