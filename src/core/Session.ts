@@ -324,7 +324,8 @@ export default class Session extends EventEmitter {
       options.cache,
       options.enable_session_cache,
       options.po_token,
-      options.retrieve_innertube_config
+      options.retrieve_innertube_config,
+      options.xtra_headers,
     );
 
     return new Session(
@@ -405,7 +406,8 @@ export default class Session extends EventEmitter {
     cache?: ICache,
     enable_session_cache = true,
     po_token?: string,
-    retrieve_innertube_config = true
+    retrieve_innertube_config = true,
+    xtra_headers?: XtraHttpRequestHeader[],
   ) {
     const session_args = {
       lang,
@@ -496,6 +498,13 @@ export default class Session extends EventEmitter {
             config_headers['Origin'] = Constants.URLS.YT_BASE;
           }
 
+          if(xtra_headers) {
+            Log.info(TAG, 'Including extra headers.');
+            xtra_headers.forEach((e) => {
+              config_headers[e.header] = e.value;
+            } )  
+          }
+          
           const config = await fetch(`${Constants.URLS.API.PRODUCTION_1}v1/config?prettyPrint=false`, {
             headers: config_headers,
             method: 'POST',
