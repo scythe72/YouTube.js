@@ -107,7 +107,7 @@ export default class HTTPClient {
         request_headers.delete('X-Youtube-Client-Version');
       }
     }
-
+    
     // Authenticate (NOTE: YouTube Kids does not support regular bearer tokens)
     if (session.logged_in && is_innertube_req && !is_web_kids) {
       const oauth = session.oauth;
