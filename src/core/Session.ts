@@ -217,10 +217,6 @@ export type SessionOptions = {
    * forcing an older Player ID can help work around temporary issues.
    */
   player_id?: string;
-  /**
-   * Extra HTTP request headers.  Additional HTTP headers added to YouTube fetch requests.
-   */
-  xtra_headers?: XtraHttpRequestHeader[];
 }
 
 export type SessionData = {
@@ -250,11 +246,6 @@ export type SessionArgs = {
   enable_safety_mode: boolean;
   visitor_data: string;
   on_behalf_of_user: string | undefined;
-}
-
-export type XtraHttpRequestHeader = {
-  header: string;
-  value: string;
 }
 
 const TAG = 'Session';
@@ -325,7 +316,6 @@ export default class Session extends EventEmitter {
       options.enable_session_cache,
       options.po_token,
       options.retrieve_innertube_config,
-      options.xtra_headers,
     );
 
     return new Session(
@@ -407,7 +397,6 @@ export default class Session extends EventEmitter {
     enable_session_cache = true,
     po_token?: string,
     retrieve_innertube_config = true,
-    xtra_headers?: XtraHttpRequestHeader[],
   ) {
     const session_args = {
       lang,
@@ -490,19 +479,13 @@ export default class Session extends EventEmitter {
             'Referer': Constants.URLS.YT_BASE,
             'X-Goog-Visitor-Id': context_data.visitor_data,
             'X-Origin': Constants.URLS.YT_BASE,
-            'X-Youtube-Client-Version': context_data.client_version
+            'X-Youtube-Client-Version': context_data.client_version,
+            'X-Content-Type-Options': "nosniff",
           };
 
           if (Platform.shim.server) {
             config_headers['User-Agent'] = user_agent;
             config_headers['Origin'] = Constants.URLS.YT_BASE;
-          }
-
-          if(xtra_headers) {
-            Log.info(TAG, 'Including extra headers.');
-            xtra_headers.forEach((e) => {
-              config_headers[e.header] = e.value;
-            } )  
           }
           
           const config = await fetch(`${Constants.URLS.API.PRODUCTION_1}v1/config?prettyPrint=false`, {
